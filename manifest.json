@@ -1,11 +1,11 @@
 {
-  "name": "Afsar Agro Billing App",
-  "short_name": "AfsarAgro",
+  "name": "Afsar Agro App",
+  "short_name": "Agro",
   "start_url": "index.html",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#ffffff",
-  "theme_color": "#4CAF50",
-  "orientation": "portrait",
+  "theme_color": "#0d9488",
   "icons": [
     {
       "src": "icons/icon-192.png",
