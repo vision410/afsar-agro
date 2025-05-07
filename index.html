@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AFSAR AGRO</title>
+<meta name="theme-color" content="#66cdaa">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h2>AFSAR AGRO</h2>
+
+<iframe id="printFrame" style="display: none;"></iframe>
+
+<div>
+  <label>Customer Name:
+    <input type="text" id="customerName" list="customerSuggestions">
+    <datalist id="customerSuggestions"></datalist>
+  </label>
+  <label>Bill No: <input type="number" id="billNo" readonly></label>
+  <label>Date: <input type="text" id="billDate" readonly></label>
+</div>
+
+
+<hr>
+
+<div>
+  <input type="text" id="itemName" placeholder="Item Name" list="itemSuggestions">
+<datalist id="itemSuggestions"></datalist>
+  <input type="number" id="itemPrice" placeholder="Price">
+  <input type="number" id="itemQty" placeholder="Qty" min="1" max="99" oninput="autoAddItem()">
+  <button onclick="addItem()">➕ Add</button>
+</div>
+
+<table id="itemTable">
+  <thead>
+    <tr><th>Item</th><th>Price</th><th>Qty</th><th>Amount</th><th>❌</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div class="total-box">Total: ₹<span id="totalAmount">0</span></div>
+<table style="width: 100%; margin-top: 5px;">
+  <tr>
+    <td><strong>Total Items:</strong> <span id="pTotalItems"></span></td>
+    <td><strong>Total Quantity:</strong> <span id="pTotalQty"></span></td>
+  </tr>
+</table>
+
+<div style="text-align:right; margin-top:5px;">
+  <label>Paid Amount: <input type="number" id="paidAmount" oninput="updateStatus()"></label><br>
+  <div>Remaining: ₹<span id="remaining">0</span></div>
+  <div>Status: <strong id="status">Unpaid</strong></div>
+</div>
+
+<div style="text-align:center; margin-top:10px;">
+  <strong><span id="pMark"></span></strong>
+</div>
+
+<button onclick="saveAndPrint()">💾🖨️ Save & Print</button>
+<button onclick="deleteBill()">🗑️ Delete Bill</button>
+<button onclick="deleteAllBills()">🧹 Delete All Bills</button>
+<!-- Clear button with password protection -->
+    <button id="clearButton">Clear</button>
+<hr>
+<h3>🔍 Search </h3>
+<input type="text" id="searchInput" placeholder="Enter Bill No or Customer Name">
+<button onclick="loadBill()">Load Bill</button>
+
+<div id="printArea" style="display:none;">
+  <div class="print-bill">
+    <h3 style="text-align:center;">🙏 धन्यवाद !</h3>
+    <table style="width:100%; margin-bottom:5px;">
+      <tr>
+        <td><strong>Customer:</strong> <span id="pCustomer"></span></td>
+        <td><strong>Bill No:</strong> <span id="pBillNo"></span></td>
+        <td><strong>Date:</strong> <span id="pDate"></span></td>
+      </tr>
+    </table>
+
+    <table>
+  <thead><tr><th>Item</th><th>Qty</th><th>Amount</th></tr></thead>
+  <tbody id="pItems"></tbody>
+  <tfoot>
+    <tr>
+      <td><strong>Total Items:</strong> <span id="pTotalItems"></span></td>
+      <td><strong>Total Qty:</strong> <span id="pTotalQty"></span></td>
+      <td></td>
+    </tr>
+  </tfoot>
+</table>
+
+    <div style="text-align:right; margin-top:5px;">
+      <strong>Total: ₹<span id="pTotal"></span></strong><br>
+      <strong>Paid: ₹<span id="pPaid"></span></strong><br>
+      <strong>Remaining: ₹<span id="pRemain"></span></strong><br>
+      <strong>Status: <span id="pStatus"></span></strong>
+    </div>
+  </div>
+</div>
+
+<script src="js/script.js"></script>
+
+<div style="text-align:right;">
+  <label><input type="checkbox" id="billMark"> Mark as Duplicate</label>
+</div>
+
+<hr>
+<h3>📆 Filter Bills By Date</h3>
+<label>From: <input type="date" id="fromDate"></label>
+<label>To: <input type="date" id="toDate"></label>
+<button onclick="filterBills()">📄 Show Bills</button>
+<button onclick="downloadXML()">⬇️ Download XML</button>
+
+<label>Filter By: 
+  <select id="markFilter">
+    <option value="all">📋 All Bills</option>
+    <option value="marked">✅ Marked Only</option>
+    <option value="unmarked">❌ Unmarked Only</option>
+  </select>
+</label>
+
+<table id="filteredTable" style="margin-top:10px; display:none;">
+  <thead>
+    <tr><th>Date</th><th>Customer Name</th><th>Remaining ₹</th><th>Bill No</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<hr>
+<h3>📂 Upload Customer Name List</h3>
+<input type="file" id="customerFile" accept=".txt,.csv">
+<button onclick="uploadCustomerList()">📤 Upload</button>
+
+<input type="file" id="itemFile" accept=".txt,.csv">
+<button onclick="uploadItemList()">📤 Upload</button>
+<hr>
+<h3>🔁 Backup & Restore</h3>
+
+<button onclick="exportBackup()">📤 Export Backup</button>
+<input type="file" id="backupFile" accept=".json">
+<button onclick="importBackup()">📥 Import Backup</button>
+
+<h3>📦 Item-wise Summary Report</h3>
+<input type="text" id="summaryItemName" placeholder="Enter Item Name">
+<button onclick="showItemSummary()">📊 Show Item Sale Summary</button>
+<button onclick="clearItemSummary()">❌ Clear Summary</button>
+<div id="itemSummaryResult" style="margin-top: 10px; font-weight: bold;"></div>
+
+</body>
+</html>

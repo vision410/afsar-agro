@@ -1,0 +1,175 @@
+
+    body {
+  /* General Body Styles */
+/* General Body Styles */
+/* Global Styles */
+/* Global Styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #d3f9d8, #e6ffe6); /* Light green gradient */
+  color: #000000; /* Black text color */
+  font-size: 16px;
+  padding: 10px;
+}
+
+/* Inputs & Buttons - Light Green Theme */
+input,
+button {
+  background: linear-gradient(45deg, #d3f9d8, #e6ffe6); /* Light green gradient */
+  border: 1px solid #b2dfdb; /* Light greenish border */
+  color: #000000; /* Black text color */
+  padding: 10px 16px;
+  margin: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.2s;
+}
+
+button {
+  color: #000000; /* Black text color for button */
+}
+
+button:hover {
+  background: linear-gradient(45deg, #a0eacf, #bef5df); /* Slightly darker light green on hover */
+  transform: scale(1.05);
+}
+
+button:active {
+  background: linear-gradient(45deg, #9de7cc, #b1f2db); /* Slightly darker light green on active */
+  transform: scale(0.98);
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  padding: 10px;
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 5px;
+  background-color: #ffffff; /* White background for inputs */
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+input:focus,
+select:focus {
+  border-color: #66cdaa; /* Light green border on focus */
+  box-shadow: 0 0 6px rgba(102, 205, 170, 0.5); /* Light greenish glow */
+  outline: none;
+}
+
+.total-box,
+.print-bill {
+  background-color: #e9fff9; /* Light green background */
+  padding: 10px;
+  border-radius: 5px;
+  color: #000000; /* Black text color */
+  border: 1px solid #b2dfdb; /* Light greenish border */
+}
+
+/* Table Styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: #ffffff; /* White background */
+  margin-top: 10px;
+  border: 1px solid #ccc; /* Light border */
+}
+
+table th,
+table td {
+  border: 1px solid #ddd; /* Light gray border */
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+table th {
+  background-color: #d2f4e8; /* Light green background for headers */
+  color: #000000; /* Black text color */
+}
+
+/* Media Queries for Responsiveness */
+@media screen and (max-width: 1024px) {
+  body {
+    font-size: 15px;
+  }
+
+  input, button, select {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  table th, table td {
+    font-size: 14px;
+    padding: 6px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  h2, h3 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .total-box, .print-bill {
+    font-size: 14px;
+  }
+
+  table th, table td {
+    font-size: 13px;
+    padding: 4px;
+  }
+}
+
+/* Additional Form Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input {
+  padding: 5px;
+  margin-top: 5px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green background */
+  color: #000000; /* Black text color */
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+  
+
+
+          body {
+            font-family: sans-serif;
+            margin: 20px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+          }
+          th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+          }
+          h3, p {
+            margin: 5px 0;
+          }
+        
