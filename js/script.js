@@ -1,5 +1,4 @@
-
-  let billCounter = localStorage.getItem("lastBillNo")
+let billCounter = localStorage.getItem("lastBillNo")
     ? parseInt(localStorage.getItem("lastBillNo")) + 1
     : 1;
 
@@ -249,16 +248,27 @@ function deleteAllBills() {
   location.reload(); // Refresh to reset billCounter
 }
 
+function parseDate(dateString) {
+  const parts = dateString.split('/');
+  // parts[0] is day, parts[1] is month, parts[2] is year
+  return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+}
+
 function filterBills() {
-  const from = new Date(document.getElementById("fromDate").value);
-  const to = new Date(document.getElementById("toDate").value);
-  const markFilter = document.getElementById("markFilter").value; // 📌 New dropdown value
+  const fromDateInput = document.getElementById("fromDate").value;
+  const toDateInput = document.getElementById("toDate").value;
+
+  // Use the custom parseDate function to handle dd/mm/yyyy format
+  const from = parseDate(fromDateInput);
+  const to = parseDate(toDateInput);
+  const markFilter = document.getElementById("markFilter").value;
 
   const table = document.getElementById("filteredTable");
   const tbody = table.querySelector("tbody");
   tbody.innerHTML = "";
   filteredBills = [];
 
+  // Check if dates are valid
   if (!from || !to || isNaN(from) || isNaN(to)) {
     alert("Please select both from and to dates.");
     return;
@@ -271,7 +281,6 @@ function filterBills() {
 
       // ✅ Check if bill is within date range
       if (billDate >= from && billDate <= to) {
-
         // ✅ Apply mark filter logic
         if (markFilter === "marked" && !bill.mark) continue;     // skip if not marked
         if (markFilter === "unmarked" && bill.mark) continue;    // skip if marked
@@ -533,6 +542,60 @@ updateTable();
             }
         });
         
+function exportBillsToExcel() {
+  const from = new Date(document.getElementById("fromDate").value);
+  const to = new Date(document.getElementById("toDate").value);
+  const markFilter = document.getElementById("markFilter").value;
+
+  if (isNaN(from) || isNaN(to)) {
+    alert("Please select valid 'From' and 'To' dates.");
+    return;
+  }
+
+  const data = [];
+
+  for (let key in localStorage) {
+    if (key.startsWith("bill_")) {
+      const bill = JSON.parse(localStorage.getItem(key));
+      const billDate = new Date(bill.date);
+
+      if (billDate >= from && billDate <= to) {
+        if (markFilter === "marked" && !bill.mark) continue;
+        if (markFilter === "unmarked" && bill.mark) continue;
+
+        bill.items.forEach(item => {
+          data.push({
+            "Date": bill.date,
+            "Bill No": bill.billNo,
+            "Customer": bill.customer,
+            "Item": item.name,
+            "Price": item.price,
+            "Qty": item.qty,
+            "Amount": item.amount,
+            "Total": bill.total,
+            "Paid": bill.paid,
+            "Remaining": bill.remaining,
+            "Status": bill.status,
+            "Marked": bill.mark ? "Yes" : "No"
+          });
+        });
+      }
+    }
+  }
+
+  if (data.length === 0) {
+    alert("No bills found for selected filter.");
+    return;
+  }
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Bills");
+
+  XLSX.writeFile(workbook, `AFSAR_AGRO_BILLS_${new Date().toISOString().split("T")[0]}.xlsx`);
+}
+
+
   function downloadXML() {
   const from = new Date(document.getElementById("fromDate").value);
   const to = new Date(document.getElementById("toDate").value);
@@ -604,5 +667,3 @@ if ("serviceWorker" in navigator) {
       .catch(err => console.error("❌ Service Worker error:", err));
   });
 }
-
-  
