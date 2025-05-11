@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AFSAR AGRO</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
 <meta name="theme-color" content="#66cdaa">
 <link rel="icon" href="icon-192.png" sizes="192x192">
   <link rel="stylesheet" href="css/style.css">
@@ -149,6 +150,6 @@
 <button onclick="showItemSummary()">📊 Show Item Sale Summary</button>
 <button onclick="clearItemSummary()">❌ Clear Summary</button>
 <div id="itemSummaryResult" style="margin-top: 10px; font-weight: bold;"></div>
-
+<button onclick="exportBillsToExcel()">📥 Export to Excel</button>
 </body>
 </html>
