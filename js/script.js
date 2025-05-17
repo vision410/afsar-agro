@@ -19,6 +19,7 @@ let billCounter = localStorage.getItem("lastBillNo")
     document.getElementById("itemName").value = "";
     document.getElementById("itemPrice").value = "";
     document.getElementById("itemQty").value = "";
+  document.getElementById("itemName").focus(); // ✅ Refocus to itemName for next entry
   }
 
   function updateTable() {
@@ -518,6 +519,7 @@ function clearItemSummary() {
 document.getElementById("itemName").value = "";
 document.getElementById("itemPrice").value = "";
 document.getElementById("itemQty").value = "";
+  document.getElementById("itemName").focus(); // ✅ Refocus to itemName for next entry
 document.getElementById("paidAmount").value = "";
 document.getElementById("remaining").innerText = "0";
 document.getElementById("status").innerText = "Unpaid";
@@ -667,3 +669,33 @@ if ("serviceWorker" in navigator) {
       .catch(err => console.error("❌ Service Worker error:", err));
   });
 }
+
+
+// ✅ Focus on item name after customer selection
+document.getElementById("customerName").addEventListener("change", function () {
+  document.getElementById("itemName").focus();
+});
+
+// ✅ Modify itemName event listener to focus on qty after match
+document.getElementById("itemName").addEventListener("input", function () {
+  const input = this.value.toLowerCase();
+  const datalist = document.getElementById("itemSuggestions");
+  datalist.innerHTML = "";
+
+  const itemMap = JSON.parse(localStorage.getItem("itemList") || "{}");
+
+  Object.keys(itemMap)
+    .filter(name => name.toLowerCase().includes(input))
+    .slice(0, 10)
+    .forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      datalist.appendChild(option);
+    });
+
+  const exactMatch = Object.keys(itemMap).find(name => name.toLowerCase() === input);
+  if (exactMatch) {
+    document.getElementById("itemPrice").value = itemMap[exactMatch];
+    document.getElementById("itemQty").focus(); // ✅ Focus to Qty
+  }
+});
