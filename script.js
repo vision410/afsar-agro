@@ -332,22 +332,6 @@ function uploadCustomerList() {
   reader.readAsText(file);
 }
 
-document.getElementById("customerName").addEventListener("input", function () {
-  const input = this.value.toLowerCase();
-  const datalist = document.getElementById("customerSuggestions");
-  datalist.innerHTML = "";
-
-  const names = JSON.parse(localStorage.getItem("customerList") || "[]");
-
-  names
-    .filter(name => name.toLowerCase().includes(input))
-    .slice(0, 10) // Show top 10 matches
-    .forEach(name => {
-      const option = document.createElement("option");
-      option.value = name;
-      datalist.appendChild(option);
-    });
-});
 
 function uploadItemList() {
   const fileInput = document.getElementById("itemFile");
@@ -382,28 +366,6 @@ function uploadItemList() {
   reader.readAsText(file);
 }
 
-document.getElementById("itemName").addEventListener("input", function () {
-  const input = this.value.toLowerCase();
-  const datalist = document.getElementById("itemSuggestions");
-  datalist.innerHTML = "";
-
-  const itemMap = JSON.parse(localStorage.getItem("itemList") || "{}");
-
-  Object.keys(itemMap)
-    .filter(name => name.toLowerCase().includes(input))
-    .slice(0, 10)
-    .forEach(name => {
-      const option = document.createElement("option");
-      option.value = name;
-      datalist.appendChild(option);
-    });
-
-  // ✅ Auto-fill price if exact match found
-  const exactMatch = Object.keys(itemMap).find(name => name.toLowerCase() === input);
-  if (exactMatch) {
-    document.getElementById("itemPrice").value = itemMap[exactMatch];
-  }
-});
 
 function autoAddItem() {
   const name = document.getElementById("itemName").value.trim();
@@ -672,11 +634,46 @@ if ("serviceWorker" in navigator) {
 
 
 // ✅ Focus on item name after customer selection
-document.getElementById("customerName").addEventListener("change", function () {
-  document.getElementById("itemName").focus();
-});
 
 // ✅ Modify itemName event listener to focus on qty after match
+
+// ✅ Customer name fast search + suggestion hide on exact match
+document.getElementById("customerName").addEventListener("input", function () {
+  const input = this.value.toLowerCase();
+  const datalist = document.getElementById("customerSuggestions");
+  datalist.innerHTML = "";
+
+  const names = JSON.parse(localStorage.getItem("customerList") || "[]");
+
+  const matches = names
+    .filter(name => name.toLowerCase().includes(input))
+    .slice(0, 10);
+
+  matches.forEach(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    datalist.appendChild(option);
+  });
+
+  if (matches.length === 1 && matches[0].toLowerCase() === input) {
+    datalist.innerHTML = "";
+  }
+});
+
+// ✅ Cross-browser support: On blur, move focus to itemName if valid match
+document.getElementById("customerName").addEventListener("blur", function () {
+  const val = this.value.toLowerCase();
+  const names = JSON.parse(localStorage.getItem("customerList") || "[]");
+  const match = names.find(name => name.toLowerCase() === val);
+
+  if (match) {
+    setTimeout(() => {
+      document.getElementById("itemName").focus();
+    }, 100);
+  }
+});
+
+// ✅ Item name fast search + auto price fill + suggestion hide on exact match
 document.getElementById("itemName").addEventListener("input", function () {
   const input = this.value.toLowerCase();
   const datalist = document.getElementById("itemSuggestions");
@@ -684,18 +681,22 @@ document.getElementById("itemName").addEventListener("input", function () {
 
   const itemMap = JSON.parse(localStorage.getItem("itemList") || "{}");
 
-  Object.keys(itemMap)
+  const matches = Object.keys(itemMap)
     .filter(name => name.toLowerCase().includes(input))
-    .slice(0, 10)
-    .forEach(name => {
-      const option = document.createElement("option");
-      option.value = name;
-      datalist.appendChild(option);
-    });
+    .slice(0, 10);
+
+  matches.forEach(name => {
+    const option = document.createElement("option");
+    option.value = name;
+    datalist.appendChild(option);
+  });
 
   const exactMatch = Object.keys(itemMap).find(name => name.toLowerCase() === input);
   if (exactMatch) {
     document.getElementById("itemPrice").value = itemMap[exactMatch];
-    document.getElementById("itemQty").focus(); // ✅ Focus to Qty
+    setTimeout(() => {
+      document.getElementById("itemQty").focus();
+    }, 0);
+    datalist.innerHTML = "";
   }
 });
