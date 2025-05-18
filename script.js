@@ -623,15 +623,11 @@ function exportBillsToExcel() {
   link.click();
 }
 
-// Check if the browser supports Service Workers
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(res => console.log("✅ Service Worker registered"))
-      .catch(err => console.error("❌ Service Worker error:", err));
-  });
-}
-
+ if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+      .then(reg => console.log("✅ Service Worker registered:", reg.scope))
+      .catch(err => console.error("❌ SW error:", err));
+  }
 
 // ✅ Focus on item name after customer selection
 
