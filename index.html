@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="manifest" href="manifest.json">
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AFSAR AGRO</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
+<meta name="theme-color" content="#66cdaa">
+<link rel="icon" href="icon-192.png" sizes="192x192">
+  <style>
+
+    body {
+  /* General Body Styles */
+/* General Body Styles */
+/* Global Styles */
+/* Global Styles */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to right, #d3f9d8, #e6ffe6); /* Light green gradient */
+  color: #000000; /* Black text color */
+  font-size: 16px;
+  padding: 10px;
+}
+
+/* Inputs & Buttons - Light Green Theme */
+input,
+button {
+  background: linear-gradient(45deg, #d3f9d8, #e6ffe6); /* Light green gradient */
+  border: 1px solid #b2dfdb; /* Light greenish border */
+  color: #000000; /* Black text color */
+  padding: 10px 16px;
+  margin: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s, transform 0.2s;
+}
+
+button {
+  color: #000000; /* Black text color for button */
+}
+
+button:hover {
+  background: linear-gradient(45deg, #a0eacf, #bef5df); /* Slightly darker light green on hover */
+  transform: scale(1.05);
+}
+
+button:active {
+  background: linear-gradient(45deg, #9de7cc, #b1f2db); /* Slightly darker light green on active */
+  transform: scale(0.98);
+}
+
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select {
+  padding: 10px;
+  border: 1px solid #ccc; /* Light border */
+  border-radius: 5px;
+  background-color: #ffffff; /* White background for inputs */
+  transition: border 0.3s, box-shadow 0.3s;
+}
+
+input:focus,
+select:focus {
+  border-color: #66cdaa; /* Light green border on focus */
+  box-shadow: 0 0 6px rgba(102, 205, 170, 0.5); /* Light greenish glow */
+  outline: none;
+}
+
+.total-box,
+.print-bill {
+  background-color: #e9fff9; /* Light green background */
+  padding: 10px;
+  border-radius: 5px;
+  color: #000000; /* Black text color */
+  border: 1px solid #b2dfdb; /* Light greenish border */
+}
+
+/* Table Styling */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  background-color: #ffffff; /* White background */
+  margin-top: 10px;
+  border: 1px solid #ccc; /* Light border */
+}
+
+table th,
+table td {
+  border: 1px solid #ddd; /* Light gray border */
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+}
+
+table th {
+  background-color: #d2f4e8; /* Light green background for headers */
+  color: #000000; /* Black text color */
+}
+
+/* Media Queries for Responsiveness */
+@media screen and (max-width: 1024px) {
+  body {
+    font-size: 15px;
+  }
+
+  input, button, select {
+    width: 100%;
+    margin-bottom: 8px;
+  }
+
+  table th, table td {
+    font-size: 14px;
+    padding: 6px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  h2, h3 {
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .total-box, .print-bill {
+    font-size: 14px;
+  }
+
+  table th, table td {
+    font-size: 13px;
+    padding: 4px;
+  }
+}
+
+/* Additional Form Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
+label {
+  font-weight: bold;
+}
+
+input {
+  padding: 5px;
+  margin-top: 5px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #4CAF50; /* Green background */
+  color: #000000; /* Black text color */
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049; /* Slightly darker green on hover */
+}
+  
+
+
+          body {
+            font-family: sans-serif;
+            margin: 20px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+          }
+          th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+          }
+          h3, p {
+            margin: 5px 0;
+          }
+        
+
+  @media print {
+    * {
+      background: none !important;
+      color: #000 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    button, input, select, .no-print {
+      display: none !important;
+    }
+    body {
+      margin: 0;
+      font-size: 12px;
+    }
+    table, th, td {
+      border: 1px solid #000 !important;
+      border-collapse: collapse !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+<h2>AFSAR AGRO</h2>
+
+<iframe id="printFrame" style="display: none;"></iframe>
+
+<div>
+  <label>Customer Name:
+    <input type="text" id="customerName" list="customerSuggestions">
+    <datalist id="customerSuggestions"></datalist>
+  </label>
+  <label>Bill No: <input type="number" id="billNo" readonly></label>
+  <label>Date: <input type="text" id="billDate" readonly></label>
+</div>
+
+
+<hr>
+
+<div>
+  <input type="text" id="itemName" placeholder="Item Name" list="itemSuggestions">
+<datalist id="itemSuggestions"></datalist>
+  <input type="number" id="itemPrice" placeholder="Price">
+  <input type="number" id="itemQty" placeholder="Qty" min="1" max="99" oninput="autoAddItem()">
+  <button onclick="addItem()">➕ Add</button>
+</div>
+
+<table id="itemTable">
+  <thead>
+    <tr><th>Item</th><th>Price</th><th>Qty</th><th>Amount</th><th>❌</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div class="total-box">Total: ₹<span id="totalAmount">0</span></div>
+<table style="width: 100%; margin-top: 5px;">
+  <tr>
+    <td><strong>Total Items:</strong> <span id="pTotalItems"></span></td>
+    <td><strong>Total Quantity:</strong> <span id="pTotalQty"></span></td>
+  </tr>
+</table>
+
+<div style="text-align:right; margin-top:5px;">
+  <label>Paid Amount: <input type="number" id="paidAmount" oninput="updateStatus()"></label><br>
+  <div>Remaining: ₹<span id="remaining">0</span></div>
+  <div>Status: <strong id="status">Unpaid</strong></div>
+</div>
+
+<div style="text-align:center; margin-top:10px;">
+  <strong><span id="pMark"></span></strong>
+</div>
+
+<button onclick="saveAndPrint()">💾🖨️ Save & Print</button>
+<button onclick="deleteBill()">🗑️ Delete Bill</button>
+<button onclick="deleteAllBills()">🧹 Delete All Bills</button>
+<!-- Clear button with password protection -->
+    <button id="clearButton">Clear</button>
+<hr>
+<h3>🔍 Search </h3>
+<input type="text" id="searchInput" placeholder="Enter Bill No or Customer Name">
+<button onclick="loadBill()">Load Bill</button>
+
+<div id="printArea" style="display:none;">
+  <div class="print-bill">
+    <h3 style="text-align:center;">🙏 धन्यवाद !</h3>
+    <table style="width:100%; margin-bottom:5px;">
+      <tr>
+        <td><strong>Customer:</strong> <span id="pCustomer"></span></td>
+        <td><strong>Bill No:</strong> <span id="pBillNo"></span></td>
+        <td><strong>Date:</strong> <span id="pDate"></span></td>
+      </tr>
+    </table>
+
+    <table>
+  <thead><tr><th>Item</th><th>Qty</th><th>Amount</th></tr></thead>
+  <tbody id="pItems"></tbody>
+  <tfoot>
+    <tr>
+      <td><strong>Total Items:</strong> <span id="pTotalItems"></span></td>
+      <td><strong>Total Qty:</strong> <span id="pTotalQty"></span></td>
+      <td></td>
+    </tr>
+  </tfoot>
+</table>
+
+    <div style="text-align:right; margin-top:5px;">
+      <strong>Total: ₹<span id="pTotal"></span></strong><br>
+      <strong>Paid: ₹<span id="pPaid"></span></strong><br>
+      <strong>Remaining: ₹<span id="pRemain"></span></strong><br>
+      <strong>Status: <span id="pStatus"></span></strong>
+    </div>
+  </div>
+</div>
+
+<script>
+let billCounter = localStorage.getItem("lastBillNo")
+    ? parseInt(localStorage.getItem("lastBillNo")) + 1
+    : 1;
+
+  document.getElementById("billNo").value = billCounter;
+  document.getElementById("billDate").value = new Date().toLocaleDateString();
+
+  let items = [];
+  let isEditing = false;
+
+  function addItem() {
+    const name = document.getElementById("itemName").value;
+    const price = parseFloat(document.getElementById("itemPrice").value);
+    const qty = parseInt(document.getElementById("itemQty").value);
+    if (!name || isNaN(price) || isNaN(qty)) return alert("Fill all item fields.");
+    const amount = price * qty;
+    items.push({ name, price, qty, amount });
+    updateTable();
+    document.getElementById("itemName").value = "";
+    document.getElementById("itemPrice").value = "";
+    document.getElementById("itemQty").value = "";
+  document.getElementById("itemName").focus(); // ✅ Refocus to itemName for next entry
+  }
+
+  function updateTable() {
+  const tbody = document.querySelector("#itemTable tbody");
+  tbody.innerHTML = "";
+  let total = 0;
+  let totalQty = 0;
+
+  items.forEach((item, index) => {
+    total += item.amount;
+    totalQty += item.qty;
+
+    const row = `<tr>
+      <td>${item.name}</td>
+      <td>₹${item.price.toFixed(2)}</td>
+      <td>${item.qty}</td>
+      <td>₹${item.amount.toFixed(2)}</td>
+      <td><button onclick="removeItem(${index})">❌</button></td>
+    </tr>`;
+    tbody.innerHTML += row;
+  });
+
+  document.getElementById("totalAmount").innerText = total.toFixed(2);
+  document.getElementById("pTotalItems").innerText = items.length;
+  document.getElementById("pTotalQty").innerText = totalQty;
+  updateStatus();
+}
+
+  function removeItem(index) {
+    items.splice(index, 1);
+    updateTable();
+  }
+
+  function updateStatus() {
+    const total = parseFloat(document.getElementById("totalAmount").innerText);
+    const paid = parseFloat(document.getElementById("paidAmount").value) || 0;
+    const remaining = Math.max(0, total - paid);
+    const status = remaining === 0 ? "Paid" : "Unpaid";
+    document.getElementById("remaining").innerText = remaining.toFixed(2);
+    document.getElementById("status").innerText = status;
+  }
+
+ function saveAndPrint() {
+  const customerName = document.getElementById("customerName").value;
+  const paidAmount = parseFloat(document.getElementById("paidAmount").value) || 0;
+  const totalAmount = parseFloat(document.getElementById("totalAmount").innerText.replace(/[^\d.-]/g, '')) || 0;
+  const remaining = Math.max(0, totalAmount - paidAmount);
+  const status = remaining === 0 ? "Paid" : "Unpaid";
+  const billMark = document.getElementById("billMark").checked;
+
+  if (!customerName || items.length === 0) {
+    return alert("Fill customer name & add items.");
+  }
+
+  const billNo = parseInt(document.getElementById("billNo").value);
+  const totalItems = items.length;
+  const totalQty = items.reduce((sum, item) => sum + item.qty, 0);
+
+  const bill = {
+    customer: customerName,
+    billNo: billNo,
+    date: document.getElementById("billDate").value,
+    items: items,
+    total: totalAmount.toFixed(2),
+    paid: paidAmount.toFixed(2),
+    remaining: remaining.toFixed(2),
+    status: status,
+    mark: billMark,
+    totalItems: totalItems,
+    totalQty: totalQty
+  };
+
+  localStorage.setItem(`bill_${billNo}`, JSON.stringify(bill));
+
+  if (!isEditing) {
+    localStorage.setItem("lastBillNo", billNo);
+    billCounter = billNo + 1;
+  }
+
+  // ✅ Set print content
+  document.getElementById("pCustomer").innerText = customerName;
+  document.getElementById("pBillNo").innerText = billNo;
+  document.getElementById("pDate").innerText = bill.date;
+  document.getElementById("pTotal").innerText = bill.total;
+  document.getElementById("pPaid").innerText = bill.paid;
+  document.getElementById("pRemain").innerText = bill.remaining;
+  document.getElementById("pStatus").innerText = bill.status;
+  document.getElementById("pMark").innerText = billMark ? "Yes" : "No";
+  document.getElementById("pTotalItems").innerText = bill.totalItems;
+  document.getElementById("pTotalQty").innerText = bill.totalQty;
+
+  const tbody = document.getElementById("pItems");
+  tbody.innerHTML = "";
+  items.forEach(item => {
+    tbody.innerHTML += `<tr><td>${item.name}</td><td>${item.qty}</td><td>₹${item.amount.toFixed(2)}</td></tr>`;
+  });
+
+  // ✅ Use hidden iframe to print bill (same on mobile & PC)
+  const printContents = document.getElementById("printArea").innerHTML;
+  const frame = document.getElementById("printFrame");
+
+  const frameDoc = frame.contentWindow.document;
+  frameDoc.open();
+  frameDoc.write(`
+    <html>
+      <head>
+        <title>Print Bill</title>
+        <style>
+          * { background: none !important; color: #000 !important; }
+          body {
+            font-family: sans-serif;
+            margin: 20px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+          }
+          th, td {
+            border: 1px solid #000;
+            padding: 6px;
+            text-align: center;
+          }
+          h3, p {
+            margin: 5px 0;
+          }
+        </style>
+      </head>
+      <body>
+        ${printContents}
+      </body>
+    </html>
+  `);
+  frameDoc.close();
+
+  // ✅ Trigger print
+  frame.contentWindow.focus();
+  frame.contentWindow.print();
+
+  // ✅ Reset form after print
+  isEditing = false;
+  items = [];
+  document.getElementById("customerName").value = "";
+  document.getElementById("paidAmount").value = "";
+  document.getElementById("remaining").innerText = "0";
+  document.getElementById("status").innerText = "Unpaid";
+  document.getElementById("billMark").checked = false;
+  document.getElementById("billNo").value = billCounter;
+  document.getElementById("billDate").value = new Date().toLocaleDateString();
+  document.getElementById("pTotalItems").innerText = "";
+  document.getElementById("pTotalQty").innerText = "";
+  updateTable();
+}
+
+  function loadBill() {
+  const input = document.getElementById("searchInput").value.trim();
+  if (!input) return alert("Please enter a bill number or customer name.");
+  
+  let found = null;
+
+  if (!isNaN(input)) {
+    const bill = localStorage.getItem(`bill_${input}`);
+    if (bill) found = JSON.parse(bill);
+  } else {
+    for (let key in localStorage) {
+      if (key.startsWith("bill_")) {
+        const bill = JSON.parse(localStorage.getItem(key));
+        if (bill.customer.toLowerCase().includes(input.toLowerCase())) {
+          found = bill;
+          break;
+        }
+      }
+    }
+  }
+
+  if (!found) return alert("Bill not found.");
+
+  isEditing = true;
+
+  document.getElementById("customerName").value = found.customer;
+  document.getElementById("billNo").value = found.billNo;
+  document.getElementById("billDate").value = found.date;
+  document.getElementById("paidAmount").value = found.paid;
+  document.getElementById("remaining").innerText = found.remaining;
+  document.getElementById("status").innerText = found.status;
+  document.getElementById("billMark").checked = found.mark || false; // ✅ restore checkbox state
+  document.getElementById("pTotalItems").innerText = found.totalItems || 0;
+document.getElementById("pTotalQty").innerText = found.totalQty || 0;
+  items = found.items;
+
+  updateTable();
+
+  const lastSaved = parseInt(localStorage.getItem("lastBillNo") || "0");
+  if (found.billNo >= lastSaved) {
+    billCounter = found.billNo + 1;
+  }
+}
+
+function deleteBill() {
+  const input = document.getElementById("searchInput").value.trim();
+  if (!input) return alert("Enter a bill number to delete.");
+
+  const password = prompt("Enter password to delete bill:");
+  if (password !== "7875") return alert("Wrong password!");
+
+  const key = `bill_${input}`;
+  if (localStorage.getItem(key)) {
+    localStorage.removeItem(key);
+    alert(`Bill ${input} deleted successfully.`);
+  } else {
+    alert("Bill not found.");
+  }
+}
+
+function deleteAllBills() {
+  const password = prompt("Enter password to delete all bills:");
+  if (password !== "7875") return alert("Wrong password!");
+
+  let count = 0;
+  for (let key in localStorage) {
+    if (key.startsWith("bill_")) {
+      localStorage.removeItem(key);
+      count++;
+    }
+  }
+  localStorage.removeItem("lastBillNo");
+  alert(`${count} bill(s) deleted successfully.`);
+  location.reload(); // Refresh to reset billCounter
+}
+
+function parseDate(dateString) {
+  const parts = dateString.split('/');
+  // parts[0] is day, parts[1] is month, parts[2] is year
+  return new Date(`${parts[2]}-${parts[1]}-${parts[0]}`);
+}
+
+function filterBills() {
+  const fromDateInput = document.getElementById("fromDate").value;
+  const toDateInput = document.getElementById("toDate").value;
+
+  // Use the custom parseDate function to handle dd/mm/yyyy format
+  const from = parseDate(fromDateInput);
+  const to = parseDate(toDateInput);
+  const markFilter = document.getElementById("markFilter").value;
+
+  const table = document.getElementById("filteredTable");
+  const tbody = table.querySelector("tbody");
+  tbody.innerHTML = "";
+  filteredBills = [];
+
+  // Check if dates are valid
+  if (!from || !to || isNaN(from) || isNaN(to)) {
+    alert("Please select both from and to dates.");
+    return;
+  }
+
+  for (let key in localStorage) {
+    if (key.startsWith("bill_")) {
+      const bill = JSON.parse(localStorage.getItem(key));
+      const billDate = new Date(bill.date);
+
+      // ✅ Check if bill is within date range
+      if (billDate >= from && billDate <= to) {
+        // ✅ Apply mark filter logic
+        if (markFilter === "marked" && !bill.mark) continue;     // skip if not marked
+        if (markFilter === "unmarked" && bill.mark) continue;    // skip if marked
+
+        filteredBills.push(bill);
+
+        const row = `<tr>
+          <td>${bill.date}</td>
+          <td>${bill.customer}</td>
+          <td>₹${bill.remaining}</td>
+          <td>${bill.billNo}</td>
+        </tr>`;
+        tbody.innerHTML += row;
+      }
+    }
+  }
+
+  if (filteredBills.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4">No bills found in selected range.</td></tr>`;
+  }
+
+  table.style.display = "table";
+}
+
+function uploadCustomerList() {
+  const fileInput = document.getElementById("customerFile");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Please select a file.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const text = e.target.result;
+    // Split by line or comma
+    const names = text.split(/\r?\n|,/).map(name => name.trim()).filter(Boolean);
+    
+    if (names.length === 0) {
+      alert("No customer names found in file.");
+      return;
+    }
+
+    localStorage.setItem("customerList", JSON.stringify(names));
+    alert("Customer list uploaded successfully.");
+  };
+  reader.readAsText(file);
+}
+
+document.getElementById("customerName").addEventListener("input", function () {
+  const input = this.value.toLowerCase();
+  const datalist = document.getElementById("customerSuggestions");
+  datalist.innerHTML = "";
+
+  const names = JSON.parse(localStorage.getItem("customerList") || "[]");
+
+  names
+    .filter(name => name.toLowerCase().includes(input))
+    .slice(0, 10) // Show top 10 matches
+    .forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      datalist.appendChild(option);
+    });
+});
+
+function uploadItemList() {
+  const fileInput = document.getElementById("itemFile");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Please select a file.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const text = e.target.result;
+    const lines = text.split(/\r?\n/);
+    const itemMap = {};
+
+    lines.forEach(line => {
+      const [name, price] = line.split(",");
+      if (name && price && !isNaN(price)) {
+        itemMap[name.trim()] = parseFloat(price.trim());
+      }
+    });
+
+    if (Object.keys(itemMap).length === 0) {
+      alert("No valid item data found.");
+      return;
+    }
+
+    localStorage.setItem("itemList", JSON.stringify(itemMap));
+    alert("Item list with prices uploaded successfully.");
+  };
+  reader.readAsText(file);
+}
+
+document.getElementById("itemName").addEventListener("input", function () {
+  const input = this.value.toLowerCase();
+  const datalist = document.getElementById("itemSuggestions");
+  datalist.innerHTML = "";
+
+  const itemMap = JSON.parse(localStorage.getItem("itemList") || "{}");
+
+  Object.keys(itemMap)
+    .filter(name => name.toLowerCase().includes(input))
+    .slice(0, 10)
+    .forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      datalist.appendChild(option);
+    });
+
+  // ✅ Auto-fill price if exact match found
+  const exactMatch = Object.keys(itemMap).find(name => name.toLowerCase() === input);
+  if (exactMatch) {
+    document.getElementById("itemPrice").value = itemMap[exactMatch];
+  }
+});
+
+function autoAddItem() {
+  const name = document.getElementById("itemName").value.trim();
+  const price = parseFloat(document.getElementById("itemPrice").value);
+  const qtyInput = document.getElementById("itemQty");
+  const qty = parseInt(qtyInput.value);
+
+  // ✅ Check: item name, price valid, qty between 1–99 (including 01)
+  if (
+    name &&
+    !isNaN(price) &&
+    !isNaN(qty) &&
+    qty >= 1 &&
+    qty <= 99 &&
+    qtyInput.value.length === 2
+  ) {
+    addItem();
+  }
+}
+
+function exportBackup() {
+  const backup = {};
+  for (let key in localStorage) {
+    if (localStorage.hasOwnProperty(key)) {
+      backup[key] = localStorage.getItem(key);
+    }
+  }
+
+  const blob = new Blob([JSON.stringify(backup, null, 2)], {
+    type: "application/json",
+  });
+
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `AFSAR_AGRO_BACKUP_${new Date().toISOString().split("T")[0]}.json`;
+  link.click();
+}
+
+function importBackup() {
+  const fileInput = document.getElementById("backupFile");
+  const file = fileInput.files[0];
+
+  if (!file) {
+    alert("Please select a JSON backup file.");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+
+      if (typeof parsed !== "object" || parsed === null) {
+        throw new Error("Backup file is not a valid object.");
+      }
+
+      let count = 0;
+      for (let key in parsed) {
+        if (parsed.hasOwnProperty(key)) {
+          localStorage.setItem(key, parsed[key]);
+          count++;
+        }
+      }
+
+      alert(`✅ Backup restored (${count} items). Page will now reload.`);
+      location.reload();
+    } catch (err) {
+      console.error(err);
+      alert("❌ Invalid backup file. Make sure it's a valid AFSAR_AGRO backup.");
+    }
+  };
+
+  reader.readAsText(file);
+}
+
+function showItemSummary() {
+  const itemName = document.getElementById("summaryItemName").value.trim().toLowerCase();
+  if (!itemName) return alert("Please enter an item name.");
+
+  let totalQty = 0;
+  let totalAmount = 0;
+
+  for (let key in localStorage) {
+    if (key.startsWith("bill_")) {
+      const bill = JSON.parse(localStorage.getItem(key));
+      bill.items.forEach(item => {
+        if (item.name.toLowerCase() === itemName) {
+          totalQty += item.qty;
+          totalAmount += item.amount;
+        }
+      });
+    }
+  }
+
+  const resultDiv = document.getElementById("itemSummaryResult");
+
+  if (totalQty === 0) {
+    resultDiv.innerHTML = `No sales found for "<strong>${itemName}</strong>".`;
+  } else {
+    resultDiv.innerHTML = `
+      📦 Total quantity sold for "<strong>${itemName}</strong>": <strong>${totalQty}</strong><br>
+      💰 Total amount: ₹<strong>${totalAmount.toFixed(2)}</strong>
+    `;
+  }
+}
+
+function clearItemSummary() {
+  document.getElementById("summaryItemName").value = "";
+  document.getElementById("itemSummaryResult").innerHTML = "";
+}
+
+ function clearForm() {
+document.getElementById("itemName").value = "";
+document.getElementById("itemPrice").value = "";
+document.getElementById("itemQty").value = "";
+  document.getElementById("itemName").focus(); // ✅ Refocus to itemName for next entry
+document.getElementById("paidAmount").value = "";
+document.getElementById("remaining").innerText = "0";
+document.getElementById("status").innerText = "Unpaid";
+document.getElementById("totalAmount").innerText = "0";
+document.getElementById("pTotalItems").innerText = "";
+document.getElementById("pTotalQty").innerText = "";
+items = [];
+updateTable();
+        }
+
+        // Add event listener to the clear button
+        document.getElementById("clearButton").addEventListener("click", function() {
+            // Ask for password before clearing
+            var password = prompt("Please enter password to clear the form:");
+            
+            // Check if the password is correct
+            if (password === "7875") {
+                clearForm();
+                alert("Form cleared successfully.");
+            } else {
+                alert("Incorrect password.");
+            }
+        });
+        
+function exportBillsToExcel() {
+  const from = new Date(document.getElementById("fromDate").value);
+  const to = new Date(document.getElementById("toDate").value);
+  const markFilter = document.getElementById("markFilter").value;
+
+  if (isNaN(from) || isNaN(to)) {
+    alert("Please select valid 'From' and 'To' dates.");
+    return;
+  }
+
+  const data = [];
+
+  for (let key in localStorage) {
+    if (key.startsWith("bill_")) {
+      const bill = JSON.parse(localStorage.getItem(key));
+      const billDate = new Date(bill.date);
+
+      if (billDate >= from && billDate <= to) {
+        if (markFilter === "marked" && !bill.mark) continue;
+        if (markFilter === "unmarked" && bill.mark) continue;
+
+        bill.items.forEach(item => {
+          data.push({
+            "Date": bill.date,
+            "Bill No": bill.billNo,
+            "Customer": bill.customer,
+            "Item": item.name,
+            "Price": item.price,
+            "Qty": item.qty,
+            "Amount": item.amount,
+            "Total": bill.total,
+            "Paid": bill.paid,
+            "Remaining": bill.remaining,
+            "Status": bill.status,
+            "Marked": bill.mark ? "Yes" : "No"
+          });
+        });
+      }
+    }
+  }
+
+  if (data.length === 0) {
+    alert("No bills found for selected filter.");
+    return;
+  }
+
+  const worksheet = XLSX.utils.json_to_sheet(data);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, "Bills");
+
+  XLSX.writeFile(workbook, `AFSAR_AGRO_BILLS_${new Date().toISOString().split("T")[0]}.xlsx`);
+}
+
+
+  function downloadXML() {
+  const from = new Date(document.getElementById("fromDate").value);
+  const to = new Date(document.getElementById("toDate").value);
+  const markFilter = document.getElementById("markFilter").value;
+
+  if (isNaN(from) || isNaN(to)) {
+    alert("Please select both 'From' and 'To' dates.");
+    return;
+  }
+
+  let bills = [];
+
+  for (let key in localStorage) {
+    if (key.startsWith("bill_")) {
+      const bill = JSON.parse(localStorage.getItem(key));
+      const billDate = new Date(bill.date);
+
+      if (billDate >= from && billDate <= to) {
+        if (markFilter === "marked" && !bill.mark) continue;
+        if (markFilter === "unmarked" && bill.mark) continue;
+
+        bills.push(bill);
+      }
+    }
+  }
+
+  if (bills.length === 0) {
+    alert("No bills found in the selected range.");
+    return;
+  }
+
+  let xml = `<?xml version="1.0" encoding="UTF-8"?>\n<bills>\n`;
+  bills.forEach(bill => {
+    xml += `  <bill>\n`;
+    xml += `    <billNo>${bill.billNo}</billNo>\n`;
+    xml += `    <customer>${bill.customer}</customer>\n`;
+    xml += `    <date>${bill.date}</date>\n`;
+    xml += `    <total>${bill.total}</total>\n`;
+    xml += `    <paid>${bill.paid}</paid>\n`;
+    xml += `    <remaining>${bill.remaining}</remaining>\n`;
+    xml += `    <status>${bill.status}</status>\n`;
+    xml += `    <mark>${bill.mark}</mark>\n`;
+    xml += `    <items>\n`;
+    bill.items.forEach(item => {
+      xml += `      <item>\n`;
+      xml += `        <name>${item.name}</name>\n`;
+      xml += `        <price>${item.price}</price>\n`;
+      xml += `        <qty>${item.qty}</qty>\n`;
+      xml += `        <amount>${item.amount}</amount>\n`;
+      xml += `      </item>\n`;
+    });
+    xml += `    </items>\n`;
+    xml += `  </bill>\n`;
+  });
+  xml += `</bills>`;
+
+  const blob = new Blob([xml], { type: "application/xml" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = `AFSAR_AGRO_BILLS_${new Date().toISOString().split("T")[0]}.xml`;
+  link.click();
+}
+
+// Check if the browser supports Service Workers
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(res => console.log("✅ Service Worker registered"))
+      .catch(err => console.error("❌ Service Worker error:", err));
+  });
+}
+
+
+// ✅ Focus on item name after customer selection
+document.getElementById("customerName").addEventListener("input", function () {
+  const names = JSON.parse(localStorage.getItem("customerList") || "[]");
+  if (names.includes(this.value)) {
+    setTimeout(() => {
+      document.getElementById("itemName").focus();
+    }, 100);
+  }
+});
+
+// ✅ Modify itemName event listener to focus on qty after match
+document.getElementById("itemName").addEventListener("input", function () {
+  const input = this.value.toLowerCase();
+  const datalist = document.getElementById("itemSuggestions");
+  datalist.innerHTML = "";
+
+  const itemMap = JSON.parse(localStorage.getItem("itemList") || "{}");
+
+  Object.keys(itemMap)
+    .filter(name => name.toLowerCase().includes(input))
+    .slice(0, 10)
+    .forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      datalist.appendChild(option);
+    });
+
+  const exactMatch = Object.keys(itemMap).find(name => name.toLowerCase() === input);
+  if (exactMatch) {
+    document.getElementById("itemPrice").value = itemMap[exactMatch];
+    document.getElementById("itemQty").focus(); // ✅ Focus to Qty
+  }
+});
+
+</script>
+
+<div style="text-align:right;">
+  <label><input type="checkbox" id="billMark"> Mark as Duplicate</label>
+</div>
+
+<hr>
+<h3>📆 Filter Bills By Date</h3>
+<label>From: <input type="date" id="fromDate"></label>
+<label>To: <input type="date" id="toDate"></label>
+<button onclick="filterBills()">📄 Show Bills</button>
+<button onclick="downloadXML()">⬇️ Download XML</button>
+
+<label>Filter By: 
+  <select id="markFilter">
+    <option value="all">📋 All Bills</option>
+    <option value="marked">✅ Marked Only</option>
+    <option value="unmarked">❌ Unmarked Only</option>
+  </select>
+</label>
+
+<table id="filteredTable" style="margin-top:10px; display:none;">
+  <thead>
+    <tr><th>Date</th><th>Customer Name</th><th>Remaining ₹</th><th>Bill No</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<hr>
+<h3>📂 Upload Customer Name List</h3>
+<input type="file" id="customerFile" accept=".txt,.csv">
+<button onclick="uploadCustomerList()">📤 Upload</button>
+
+<input type="file" id="itemFile" accept=".txt,.csv">
+<button onclick="uploadItemList()">📤 Upload</button>
+<hr>
+<h3>🔁 Backup & Restore</h3>
+
+<button onclick="exportBackup()">📤 Export Backup</button>
+<input type="file" id="backupFile" accept=".json">
+<button onclick="importBackup()">📥 Import Backup</button>
+
+<h3>📦 Item-wise Summary Report</h3>
+<input type="text" id="summaryItemName" placeholder="Enter Item Name">
+<button onclick="showItemSummary()">📊 Show Item Sale Summary</button>
+<button onclick="clearItemSummary()">❌ Clear Summary</button>
+<div id="itemSummaryResult" style="margin-top: 10px; font-weight: bold;"></div>
+<button onclick="exportBillsToExcel()">📥 Export to Excel</button>
+</body>
+</html>
