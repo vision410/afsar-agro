@@ -265,6 +265,7 @@ button:hover {
 <hr>
 <h3>🔍 Search </h3>
 <input type="text" id="searchInput" placeholder="Enter Bill No or Customer Name">
+<div id="searchResults" style="border:1px solid #ccc; max-height:150px; overflow-y:auto; display:none; background:#fff; position:absolute; z-index:1000;"></div>
 <button onclick="loadBill()">Load Bill</button>
 
 <div id="printArea" style="display:none;">
@@ -336,8 +337,8 @@ let billCounter = localStorage.getItem("lastBillNo")
 
     const row = `<tr>
       <td>${item.name}</td>
-      <td>₹${item.price.toFixed(2)}</td>
-      <td>${item.qty}</td>
+      <td><input type="number" value="${item.price}" oninput="updateItem(${index}, 'price', this.value)"></td>
+      <td><input type="number" value="${item.qty}" oninput="updateItem(${index}, 'qty', this.value)"></td>
       <td>₹${item.amount.toFixed(2)}</td>
       <td><button onclick="removeItem(${index})">❌</button></td>
     </tr>`;
@@ -350,7 +351,18 @@ let billCounter = localStorage.getItem("lastBillNo")
   updateStatus();
 }
 
-  function removeItem(index) {
+  function updateItem(index, field, value) {
+  value = parseFloat(value);
+  if (isNaN(value) || value <= 0) return;
+
+  if (field === "price") items[index].price = value;
+  if (field === "qty") items[index].qty = parseInt(value);
+
+  items[index].amount = items[index].price * items[index].qty;
+  updateTable();
+}
+
+function removeItem(index) {
     items.splice(index, 1);
     updateTable();
   }
@@ -476,7 +488,63 @@ let billCounter = localStorage.getItem("lastBillNo")
   updateTable();
 }
 
-  function loadBill() {
+  document.getElementById("searchInput").addEventListener("input", function () {
+  const input = this.value.trim().toLowerCase();
+  const resultsDiv = document.getElementById("searchResults");
+  resultsDiv.innerHTML = "";
+
+  if (!input) {
+    resultsDiv.style.display = "none";
+    return;
+  }
+
+  let matches = [];
+
+  for (let key in localStorage) {
+    if (key.startsWith("bill_")) {
+      const bill = JSON.parse(localStorage.getItem(key));
+      if (
+        bill.billNo.toString().includes(input) ||
+        bill.customer.toLowerCase().includes(input)
+      ) {
+        matches.push(bill);
+      }
+    }
+  }
+
+  matches.slice(0, 10).forEach(bill => {
+    const div = document.createElement("div");
+    div.style.padding = "8px";
+    div.style.cursor = "pointer";
+    div.innerHTML = `🧾 Bill ${bill.billNo} - ${bill.customer}`;
+
+    div.onclick = function () {
+      loadSelectedBill(bill);
+      resultsDiv.style.display = "none";
+    };
+
+    resultsDiv.appendChild(div);
+  });
+
+  resultsDiv.style.display = matches.length ? "block" : "none";
+});
+
+function loadSelectedBill(found) {
+  isEditing = true;
+  document.getElementById("customerName").value = found.customer;
+  document.getElementById("billNo").value = found.billNo;
+  document.getElementById("billDate").value = found.date;
+  document.getElementById("paidAmount").value = found.paid;
+  document.getElementById("remaining").innerText = found.remaining;
+  document.getElementById("status").innerText = found.status;
+  document.getElementById("billMark").checked = found.mark || false;
+  document.getElementById("pTotalItems").innerText = found.totalItems || 0;
+  document.getElementById("pTotalQty").innerText = found.totalQty || 0;
+  items = found.items;
+  updateTable();
+}
+
+function loadBill() {
   const input = document.getElementById("searchInput").value.trim();
   if (!input) return alert("Please enter a bill number or customer name.");
   
@@ -755,28 +823,38 @@ function importBackup() {
   }
 
   const reader = new FileReader();
+
   reader.onload = function (e) {
+    let parsed;
+
     try {
-      const parsed = JSON.parse(e.target.result);
-
-      if (typeof parsed !== "object" || parsed === null) {
-        throw new Error("Backup file is not a valid object.");
-      }
-
-      let count = 0;
-      for (let key in parsed) {
-        if (parsed.hasOwnProperty(key)) {
-          localStorage.setItem(key, parsed[key]);
-          count++;
-        }
-      }
-
-      alert(`✅ Backup restored (${count} items). Page will now reload.`);
-      location.reload();
+      parsed = JSON.parse(e.target.result);
     } catch (err) {
-      console.error(err);
-      alert("❌ Invalid backup file. Make sure it's a valid AFSAR_AGRO backup.");
+      alert("❌ Invalid JSON file.");
+      return;
     }
+
+    // ✅ Validate object
+    if (typeof parsed !== "object" || parsed === null) {
+      alert("❌ Invalid backup structure.");
+      return;
+    }
+
+    let count = 0;
+
+    for (let key in parsed) {
+      if (parsed.hasOwnProperty(key)) {
+        localStorage.setItem(key, parsed[key]);
+        count++;
+      }
+    }
+
+    alert(`✅ Backup restored (${count} items). Page will reload.`);
+    
+    // ✅ Important: delay reload (fix bug)
+    setTimeout(() => {
+      location.reload();
+    }, 500);
   };
 
   reader.readAsText(file);
